@@ -77,8 +77,14 @@ function GameController(
     ];
 
     let activePlayer = players[0];
+    let isGameInProgress = false;
 
-    const getActivePlayer = () => activePlayer;
+    const getActivePlayer = () => {
+        if (!isGameInProgress) {
+            return null;
+        }
+        return activePlayer;
+    };
 
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
@@ -99,8 +105,25 @@ function GameController(
     }
 
     const handleVictory = (victor) => {
+        isGameInProgress = false;
         printVictoryScreen(victor);
-        board.generateNewBoard();
+    }
+
+    const checkIllegalMoves = (row, column) => {
+        if (!isGameInProgress) {
+            console.log(`Cannot place new marks - the game has ended!`);
+            return true;
+        }
+
+        const cellValue = board.getBoard()[row][column].getValue();
+
+        if (cellValue !== null) {
+            console.log(`Cannot place ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}] - this cell is already occupied!`);
+            console.log(`Try again.`);
+            return true;
+        }
+
+        return false;
     }
 
     const checkWinningConditions = () => {
@@ -183,6 +206,10 @@ function GameController(
     }
 
     const playRound = (column, row) => {
+        if (checkIllegalMoves(row, column)) {
+            return;
+        }
+
         console.log(`Placing ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}]`);
         board.markBoard(row, column, getActivePlayer().markID);
 
@@ -195,11 +222,18 @@ function GameController(
         switchPlayerTurn();
     }
 
-    printNewRound();
+    const startNewGame = () => {
+        isGameInProgress = true;
+        board.generateNewBoard();
+        printNewRound();
+    }
+
+    startNewGame();
 
     return {
         getActivePlayer,
-        playRound
+        playRound,
+        startNewGame
     };
 }
 
