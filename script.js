@@ -30,14 +30,26 @@ function GameBoard(
         }
     }
 
+    const getCell = (row, column) => {
+        if (row >= rows || column >= columns) {
+            return undefined;
+        }
+
+        return board[row][column];
+    }
+
+
     const getBoard = () => board;
 
     const markBoard = (row, column, value) => {
-        if (row >= rows || column >= columns) {
+        let cell = getCell(row, column);
+
+        if (cell === undefined) {
+            console.error(`Cannot access cell: cell out of bounds!`);
             return;
         }
 
-        board[row][column].fill(value);
+        cell.fill(value);
     };
 
     const printBoard = () => {
@@ -55,6 +67,7 @@ function GameBoard(
 
     return {
         generateNewBoard,
+        getCell,
         getBoard,
         markBoard,
         printBoard
@@ -115,9 +128,14 @@ function GameController(
             return true;
         }
 
-        const cellValue = board.getBoard()[row][column].getValue();
-
-        if (cellValue !== null) {
+        const cell = board.getCell(row, column);
+        if (cell === undefined) {
+            console.warn(`Cannot place ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}] - this cell is out of bounds!`);
+            console.log(`Try again.`);
+            return true;
+        }
+        
+        if (cell.getValue() !== null) {
             console.log(`Cannot place ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}] - this cell is already occupied!`);
             console.log(`Try again.`);
             return true;
@@ -127,17 +145,16 @@ function GameController(
     }
 
     const checkWinningConditions = () => {
-        let boardCells = board.getBoard()
 
         // Check rows
 
         for (let row = 0; row < boardRows; row++) {
-            let rowMarkID = boardCells[row][0].getValue();
+            let rowMarkID = board.getCell(row, 0).getValue();
             let victory = true;
 
             for (let column = 1; column < boardColumns; column++) {
                 if (rowMarkID === null 
-                    || boardCells[row][column].getValue() !== rowMarkID) {
+                    || board.getCell(row, column).getValue() !== rowMarkID) {
                     victory = false;
                     break;
                 }
@@ -152,12 +169,12 @@ function GameController(
         // Check columns
 
         for (let column = 0; column < boardRows; column++) {
-            let rowMarkID = boardCells[0][column].getValue();
+            let rowMarkID = board.getCell(0, column).getValue();
             let victory = true;
 
             for (let row = 1; row < boardColumns; row++) {
                 if (rowMarkID === null 
-                    || boardCells[row][column].getValue() !== rowMarkID) {
+                    || board.getCell(row, column).getValue() !== rowMarkID) {
                     victory = false;
                     break;
                 }
@@ -171,12 +188,12 @@ function GameController(
 
         // Check diagonals (assumes that the GameBoard is a square)
 
-        let rowMarkID = boardCells[0][0].getValue();
+        let rowMarkID = board.getCell(0, 0).getValue();
         let victory = true;
 
         for (let diagonal = 1; diagonal < boardRows; diagonal++) {
             if (rowMarkID === null
-                || boardCells[diagonal][diagonal].getValue() !== rowMarkID) {
+                || board.getCell(diagonal, diagonal).getValue() !== rowMarkID) {
                 victory = false;
                 break;
             }
@@ -187,12 +204,12 @@ function GameController(
         }
 
 
-        rowMarkID = boardCells[2][0].getValue();
+        rowMarkID = board.getCell(0, boardColumns - 1).getValue();
         victory = true;
 
         for (let diagonal = 1; diagonal < boardRows; diagonal++) {
             if (rowMarkID === null
-                || boardCells[diagonal][diagonal % (boardColumns - 1)].getValue() !== rowMarkID) {
+                || board.getCell(diagonal, diagonal % (boardColumns - 1)).getValue() !== rowMarkID) {
                 victory = false;
                 break;
             }
