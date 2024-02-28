@@ -18,8 +18,8 @@ function GameBoard(
     function Cell() {
         let value = null;
 
-        const fill = (player) => {
-            value = player;
+        const fill = (val) => {
+            value = val;
         }
 
         const getValue = () => value;
