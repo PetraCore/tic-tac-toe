@@ -124,7 +124,8 @@ function GameController(
 
     const checkIllegalMoves = (row, column) => {
         if (!isGameInProgress) {
-            console.log(`Cannot place new marks - the game has ended!`);
+            console.warn(`Cannot place new marks - the game has ended!`);
+            console.log(`Start new game by entering "game.startNewGame()" command`);
             return true;
         }
 
@@ -136,7 +137,7 @@ function GameController(
         }
         
         if (cell.getValue() !== null) {
-            console.log(`Cannot place ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}] - this cell is already occupied!`);
+            console.warn(`Cannot place ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}] - this cell is already occupied!`);
             console.log(`Try again.`);
             return true;
         }
