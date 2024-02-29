@@ -91,10 +91,36 @@ a {
 }
 
 .board {
-    background-color: black;
-    display: block;
+    display: grid;
+    gap: 3px;
     width: 400px;
     height: 400px;
+}
+
+.cell {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #DFDFDF;
+    border: none;
+    font-size: 4em;
+    overflow: hidden;
+
+    &[disabled] {
+        &.player1 {
+            background-color: #fae5e5;
+        }
+        &.player2 {
+            background-color: #e7f0fd;
+        }
+    }
+
+    &:not([disabled]) {
+        &:hover {
+            opacity: 0.3;
+        }
+    }
 }
 
 .footer {

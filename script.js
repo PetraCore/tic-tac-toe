@@ -38,7 +38,6 @@ function GameBoard(
         return board[row][column];
     }
 
-
     const getBoard = () => board;
 
     const markBoard = (row, column, value) => {
@@ -74,7 +73,10 @@ function GameBoard(
     };
 }
 
+
+
 function GameController(
+    boardSize = 3,
     playerOneName = 'P1',
     playerTwoName = 'P2'
 ) {
@@ -103,9 +105,100 @@ function GameController(
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     }
 
-    const boardRows = 3;
+    const boardRows = boardSize;
     const boardColumns = boardRows;
     const board = GameBoard(boardRows, boardColumns);
+
+    function ScreenController() {
+        const screen = document.querySelector('.main');
+
+        const displayGameScreen = () =>  {
+            screen.innerHTML = '';
+
+            const gameWrapper = document.createElement('div');
+            gameWrapper.classList.add('ticTacToe');
+
+            const gameStateInfo = document.createElement('h1');
+            gameStateInfo.classList.add('gameStateInfo');
+            gameStateInfo.innerHTML = `
+                <span class="player1">P1</span>
+                vs
+                <span class="player2">P2</span>
+            `;
+
+            const gameboard = document.createElement('div');
+            gameboard.classList.add('board');
+            gameboard.style.display = 'grid';
+            gameboard.style.gridTemplate = 
+            `repeat(${boardRows}, 1fr) / repeat(${boardColumns}, 1fr)`;
+
+            gameWrapper.appendChild(gameStateInfo);
+            gameWrapper.appendChild(gameboard);
+
+            screen.appendChild(gameWrapper);
+
+            displayGameboard();
+        };
+
+        const handleCellActivation = (event) => {
+            const cell = event.target;
+            const row = cell.dataset.row;
+            const column = cell.dataset.column;
+
+            playRound(column, row);
+        }
+
+        const displayGameboard = () => {
+            const gameboard = screen.querySelector('.board');
+            gameboard.innerHTML = '';
+
+            for (let row = 0; row < boardRows; row++) {
+                for (let column = 0; column < boardColumns; column++) {
+                    let cell = document.createElement('button');
+
+                    cell.classList.add('cell');
+                    cell.setAttribute('data-row', row);
+                    cell.setAttribute('data-column', column);
+                    cell.addEventListener('click', handleCellActivation);
+
+                    gameboard.appendChild(cell);
+                }
+            }
+        };
+
+        const getMarkIconHTML = (playerID) => {
+            switch(playerID) {
+                case 1: return `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12q0-3.35-2.325-5.675T12 4Q8.65 4 6.325 6.325T4 12q0 3.35 2.325 5.675T12 20m0-8"/></svg>`;
+                case 2: return `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6z"/></svg>`;
+                default: return '?';
+            }
+        }
+
+        const updateCell = (row, column) => {
+            const cell = screen.querySelector(`.cell[data-row="${row}"][data-column="${column}"]`);
+            const playerID = board.getCell(row, column).getValue();
+
+            cell.classList.add(`player${playerID}`);
+            cell.innerHTML = getMarkIconHTML(playerID); 
+            cell.disabled = true;
+        }
+
+        const lockGameBoard = () => {
+            const cells = screen.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.disabled = true;
+                cell.setAttribute('tabindex', -1);
+            });
+        }
+
+        return {
+            displayGameScreen,
+            updateCell,
+            lockGameBoard
+        }
+    }
+
+    const screen = ScreenController();
 
     const printNewRound = () => {
         board.printBoard();
@@ -119,6 +212,7 @@ function GameController(
 
     const handleVictory = (victor) => {
         isGameInProgress = false;
+        screen.lockGameBoard();
         printVictoryScreen(victor);
     }
 
@@ -230,6 +324,7 @@ function GameController(
 
         console.log(`Placing ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}]`);
         board.markBoard(row, column, getActivePlayer().markID);
+        screen.updateCell(row, column);
 
         if (checkWinningConditions()) {
             handleVictory(getActivePlayer());
@@ -244,6 +339,7 @@ function GameController(
         isGameInProgress = true;
         board.generateNewBoard();
         printNewRound();
+        screen.displayGameScreen();
     }
 
     startNewGame();
