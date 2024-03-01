@@ -172,6 +172,7 @@ a {
     align-items: center;
     gap: 4px;
 
+    margin-top: 70px;
     height: fit-content;
     font-size: 1.1rem;
 
@@ -185,5 +186,54 @@ a {
         justify-content: inherit;
         align-items: inherit;
         gap: inherit;
+    }
+}
+
+@media (max-width: 700px) {
+    .wrapper {
+        grid-template: min-content 1fr / 1fr;
+    }
+
+    .side-column {
+        flex-flow: row-wrap;
+        padding: 40px 20px;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .header{
+        & h1 {
+            writing-mode: horizontal-tb;
+            vertical-align: middle;
+        }
+    }
+
+    .main-column {
+        padding-top: 80px;
+    }
+}
+
+@media (max-width: 500px) {
+    .board {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+@media (max-width: 400px) {
+    .gameStateInfo {
+        font-size: 1.65rem;
+    }
+    .board {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 320px) {
+    .side-column,
+    .main-column {
+        padding-left: 10px;
+        padding-right: 10px;
     }
 }
