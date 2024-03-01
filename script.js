@@ -83,6 +83,7 @@ function GameController() {
     let boardRows = boardSize;
     let boardColumns = boardRows;
     const board = GameBoard(boardRows, boardColumns);
+    let isGameInProgress = false;
 
     const setGameboardSize = (size) => {
         boardSize = size;
@@ -101,8 +102,11 @@ function GameController() {
         },
     ];
 
-    let activePlayer = players[0];
-    let isGameInProgress = false;
+    const getRandomPlayer = () => {
+        return players[Math.round(Math.random() * (players.length - 1))];
+    }
+
+    let activePlayer = getRandomPlayer();
 
     const getActivePlayer = () => {
         if (!isGameInProgress) {
@@ -456,6 +460,7 @@ function GameController() {
 
     const startNewGame = () => {
         isGameInProgress = true;
+        activePlayer = getRandomPlayer();
         board.generateNewBoard(boardRows, boardColumns);
         screen.displayGameScreen();
         printNewRound();
