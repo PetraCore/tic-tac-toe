@@ -442,7 +442,6 @@ const gameController = (function () {
             return;
         }
 
-        console.log(`Placing ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}]`);
         board.markBoard(row, column, getActivePlayer().markID);
         screenController.updateCell(row, column);
 
