@@ -88,7 +88,6 @@ function GameController() {
         boardSize = size;
         boardRows = boardSize;
         boardColumns = boardRows;
-        board.generateNewBoard(boardRows, boardColumns);
     } 
 
     const players = [
@@ -180,8 +179,23 @@ function GameController() {
             gameboard.style.gridTemplate = 
             `repeat(${boardRows}, 1fr) / repeat(${boardColumns}, 1fr)`;
 
+            const options = document.createElement('div');
+            options.classList.add('options');
+
+            const settingsBtn = document.createElement('button');
+            settingsBtn.textContent = 'Settings';
+            settingsBtn.addEventListener('click', openMenuScreen);
+
+            const restartBtn = document.createElement('button');
+            restartBtn.textContent = 'Restart';
+            restartBtn.addEventListener('click', startNewGame);
+
+            options.appendChild(settingsBtn);
+            options.appendChild(restartBtn);
+
             gameWrapper.appendChild(gameStateInfo);
             gameWrapper.appendChild(gameboard);
+            gameWrapper.appendChild(options);
 
             screen.appendChild(gameWrapper);
 
@@ -442,6 +456,7 @@ function GameController() {
 
     const startNewGame = () => {
         isGameInProgress = true;
+        board.generateNewBoard(boardRows, boardColumns);
         screen.displayGameScreen();
         printNewRound();
     }

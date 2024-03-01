@@ -100,6 +100,13 @@ a {
 
 .ticTacToe {
     align-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    & h1 {
+        margin: 0;
+    }
 }
 
 .player1 {
@@ -144,6 +151,17 @@ a {
         &:hover {
             opacity: 0.3;
         }
+    }
+}
+
+.options {
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    & button {
+        padding: 4px 8px;
     }
 }
 
