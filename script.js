@@ -158,7 +158,8 @@ const gameController = (function () {
                 players[1].name = p2Name ? p2Name : players[1].name;
 
                 if(size) {
-                    setGameboardSize(parseInt(size));
+                    startNewGame(size);
+                    return;
                 }
 
                 startNewGame();
@@ -194,7 +195,7 @@ const gameController = (function () {
 
             const restartBtn = document.createElement('button');
             restartBtn.textContent = 'Restart';
-            restartBtn.addEventListener('click', startNewGame);
+            restartBtn.addEventListener('click', () => {startNewGame()});
 
             options.appendChild(settingsBtn);
             options.appendChild(restartBtn);
@@ -459,10 +460,19 @@ const gameController = (function () {
         printNewRound();
     }
 
-    const startNewGame = () => {
+    const startNewGame = (boardDimensions = boardSize) => {
+        boardDimensions = parseInt(boardDimensions);
+        if(boardDimensions > 10 || boardDimensions < 1) {
+            console.error(`Cannot generate ${boardDimensions} x ${boardDimensions} board. Please provide a value between 1 and 10.`);
+            return;
+        }
+
         isGameInProgress = true;
         activePlayer = getRandomPlayer();
+
+        setGameboardSize(boardDimensions);
         board.generateNewBoard(boardRows, boardColumns);
+
         screenController.displayGameScreen();
         printNewRound();
     }
