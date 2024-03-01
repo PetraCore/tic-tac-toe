@@ -4,23 +4,9 @@ function GameBoard(
 ) {
     const board = [];
 
-    const generateNewBoard = (newRows = rows, newColumns = columns) => {
-        rows = newRows;
-        columns = newColumns;
-
-        for (let row = 0; row < newRows; row++) {
-            board[row] = [];
-            for (let column = 0; column < newColumns; column++) {
-                board[row].push(Cell());
-            }
-        }
-    }
-
-    generateNewBoard();
-
     function Cell() {
         let value = null;
-
+        
         const fill = (val) => {
             value = val;
         }
@@ -37,8 +23,19 @@ function GameBoard(
         if (row >= rows || column >= columns) {
             return undefined;
         }
-
         return board[row][column];
+    }
+
+    const generateNewBoard = (newRows = rows, newColumns = columns) => {
+        rows = newRows;
+        columns = newColumns;
+
+        for (let row = 0; row < newRows; row++) {
+            board[row] = [];
+            for (let column = 0; column < newColumns; column++) {
+                board[row].push(Cell());
+            }
+        }
     }
 
     const getBoard = () => board;
@@ -67,6 +64,8 @@ function GameBoard(
         console.table(boardTable);
     }
 
+    generateNewBoard();
+
     return {
         generateNewBoard,
         getCell,
@@ -83,6 +82,7 @@ function GameController() {
     let boardRows = boardSize;
     let boardColumns = boardRows;
     const board = GameBoard(boardRows, boardColumns);
+
     let isGameInProgress = false;
 
     const setGameboardSize = (size) => {
@@ -118,6 +118,8 @@ function GameController() {
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     }
+
+
 
     function ScreenController() {
         const screen = document.querySelector('.main');
@@ -270,6 +272,8 @@ function GameController() {
             displayMessage
         }
     }
+
+
 
     const screen = ScreenController();
 
