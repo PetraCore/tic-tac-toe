@@ -191,10 +191,16 @@ function GameController(
             });
         }
 
+        const displayMessage = (message) => {
+            const gameStateInfo = document.querySelector('.gameStateInfo');
+            gameStateInfo.innerHTML = message;
+        }
+
         return {
             displayGameScreen,
             updateCell,
-            lockGameBoard
+            lockGameBoard,
+            displayMessage
         }
     }
 
@@ -203,11 +209,27 @@ function GameController(
     const printNewRound = () => {
         board.printBoard();
         console.log(`${getActivePlayer().name}'s turn.`);
+
+        const message = `
+            <span class="player${getActivePlayer().markID}">
+                ${getActivePlayer().name}'s
+            </span>
+            turn
+        `;
+        screen.displayMessage(message);
     }
 
     const printVictoryScreen = (victor) => {
         board.printBoard();
         console.log(`${victor.name} has won!`);
+
+        const message = `
+            <span class="player${victor.markID}">
+                ${victor.name}
+            </span>
+            has won!
+        `;
+        screen.displayMessage(message);
     }
 
     const handleVictory = (victor) => {
@@ -331,15 +353,15 @@ function GameController(
             return;
         }
 
-        printNewRound();
         switchPlayerTurn();
+        printNewRound();
     }
 
     const startNewGame = () => {
         isGameInProgress = true;
         board.generateNewBoard();
-        printNewRound();
         screen.displayGameScreen();
+        printNewRound();
     }
 
     startNewGame();
