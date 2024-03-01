@@ -77,7 +77,7 @@ function GameBoard(
 
 
 
-function GameController() {
+const gameController = (function () {
     let boardSize = 3;
     let boardRows = boardSize;
     let boardColumns = boardRows;
@@ -121,7 +121,7 @@ function GameController() {
 
 
 
-    function ScreenController() {
+    const screenController = (function () {
         const screen = document.querySelector('.main');
 
         const displayMenuScreen = () => {
@@ -271,11 +271,9 @@ function GameController() {
             lockGameBoard,
             displayMessage
         }
-    }
+    })();
 
 
-
-    const screen = ScreenController();
 
     const printNewRound = () => {
         board.printBoard();
@@ -287,7 +285,7 @@ function GameController() {
             </span>
             turn
         `;
-        screen.displayMessage(message);
+        screenController.displayMessage(message);
     }
 
     const printVictoryScreen = (victor) => {
@@ -300,7 +298,7 @@ function GameController() {
             </span>
             has won!
         `;
-        screen.displayMessage(message);
+        screenController.displayMessage(message);
     }
 
     const printTieScreen = () => {
@@ -313,12 +311,12 @@ function GameController() {
                 tie!
             </span>
         `;
-        screen.displayMessage(message);
+        screenController.displayMessage(message);
     } 
 
     const handleVictory = (victor) => {
         isGameInProgress = false;
-        screen.lockGameBoard();
+        screenController.lockGameBoard();
         printVictoryScreen(victor);
     }
 
@@ -330,7 +328,7 @@ function GameController() {
     const checkIllegalMoves = (row, column) => {
         if (!isGameInProgress) {
             console.warn(`Cannot place new marks - the game has ended!`);
-            console.log(`Start new game by entering "game.startNewGame()" command`);
+            console.log(`Start new game by entering "gameController.startNewGame()" command`);
             return true;
         }
 
@@ -446,7 +444,7 @@ function GameController() {
 
         console.log(`Placing ${getActivePlayer().name}'s mark into cell with coordinates: [X: ${column}, Y: ${row}]`);
         board.markBoard(row, column, getActivePlayer().markID);
-        screen.updateCell(row, column);
+        screenController.updateCell(row, column);
 
         if (checkWinningConditions()) {
             handleVictory(getActivePlayer());
@@ -466,13 +464,13 @@ function GameController() {
         isGameInProgress = true;
         activePlayer = getRandomPlayer();
         board.generateNewBoard(boardRows, boardColumns);
-        screen.displayGameScreen();
+        screenController.displayGameScreen();
         printNewRound();
     }
 
     const openMenuScreen = () => {
         isGameInProgress = false;
-        screen.displayMenuScreen();
+        screenController.displayMenuScreen();
     } 
 
     openMenuScreen();
@@ -482,6 +480,4 @@ function GameController() {
         playRound,
         startNewGame
     };
-}
-
-const game = GameController();
+})();
