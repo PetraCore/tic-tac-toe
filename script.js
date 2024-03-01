@@ -232,10 +232,28 @@ function GameController(
         screen.displayMessage(message);
     }
 
+    const printTieScreen = () => {
+        board.printBoard()
+        console.log(`It's a tie!`);
+
+        const message = `
+            It's a
+            <span class="player1 player2">
+                tie!
+            </span>
+        `;
+        screen.displayMessage(message);
+    } 
+
     const handleVictory = (victor) => {
         isGameInProgress = false;
         screen.lockGameBoard();
         printVictoryScreen(victor);
+    }
+
+    const handleTie = () => {
+        isGameInProgress = false;
+        printTieScreen();
     }
 
     const checkIllegalMoves = (row, column) => {
@@ -339,6 +357,17 @@ function GameController(
         return false;
     }
 
+    const checkTieConditions = () => {
+        for (let row = 0; row < boardRows; row++) {
+            for (let column = 0; column < boardColumns; column++) {
+                if (board.getCell(row, column).getValue() === null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     const playRound = (column, row) => {
         if (checkIllegalMoves(row, column)) {
             return;
@@ -350,6 +379,11 @@ function GameController(
 
         if (checkWinningConditions()) {
             handleVictory(getActivePlayer());
+            return;
+        }
+
+        if (checkTieConditions()) {
+            handleTie();
             return;
         }
 
