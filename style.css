@@ -74,6 +74,30 @@ a {
     justify-content: center;
 }
 
+.settings {
+    align-self: center;
+    width: clamp(200px, 60%, 300px);
+
+    & form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        
+        & div.label {
+            display: flex; 
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        & button {
+            flex: 0;
+            margin-top: 10px;
+            padding: 4px 8px;
+            align-self: center;
+        }
+    }
+}
+
 .ticTacToe {
     align-self: center;
 }

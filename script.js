@@ -4,10 +4,13 @@ function GameBoard(
 ) {
     const board = [];
 
-    const generateNewBoard = () => {
-        for (let row = 0; row < rows; row++) {
+    const generateNewBoard = (newRows = rows, newColumns = columns) => {
+        rows = newRows;
+        columns = newColumns;
+
+        for (let row = 0; row < newRows; row++) {
             board[row] = [];
-            for (let column = 0; column < columns; column++) {
+            for (let column = 0; column < newColumns; column++) {
                 board[row].push(Cell());
             }
         }
@@ -75,18 +78,26 @@ function GameBoard(
 
 
 
-function GameController(
-    boardSize = 3,
-    playerOneName = 'P1',
-    playerTwoName = 'P2'
-) {
+function GameController() {
+    let boardSize = 3;
+    let boardRows = boardSize;
+    let boardColumns = boardRows;
+    const board = GameBoard(boardRows, boardColumns);
+
+    const setGameboardSize = (size) => {
+        boardSize = size;
+        boardRows = boardSize;
+        boardColumns = boardRows;
+        board.generateNewBoard(boardRows, boardColumns);
+    } 
+
     const players = [
         {
-            name: playerOneName,
+            name: 'P1',
             markID: 1,
         },
         {
-            name: playerTwoName,
+            name: 'P2',
             markID: 2,
         },
     ];
@@ -105,12 +116,49 @@ function GameController(
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     }
 
-    const boardRows = boardSize;
-    const boardColumns = boardRows;
-    const board = GameBoard(boardRows, boardColumns);
-
     function ScreenController() {
         const screen = document.querySelector('.main');
+
+        const displayMenuScreen = () => {
+            screen.innerHTML = `
+                <div class="settings">
+                    <h1>Settings</h1>
+                    <form id="gameSettings">
+                        <div class="label">
+                            <label for="player1">Player 1 name</label>
+                            <input type="text" name="player1" id="player1" maxlength="15" placeholder="${players[0].name}">
+                        </div>
+                        <div class="label">
+                            <label for="player2">Player 2 name</label>
+                            <input type="text" name="player2" id="player2" maxlength="15" placeholder="${players[1].name}">
+                        </div>
+                        <div class="label">
+                            <label for="player2">Board size</label>
+                            <input type="number" name="size" id="size" min="1" max="10" placeholder="${boardSize}">
+                        </div>
+                        <button>Start Game</button>
+                    </form>
+                </div>
+            `;
+
+            const settings = screen.querySelector('#gameSettings');
+            settings.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const p1Name = document.querySelector('#player1').value;
+                const p2Name = document.querySelector('#player2').value;
+                const size = document.querySelector('#size').value;
+
+                players[0].name = p1Name ? p1Name : players[0].name;
+                players[1].name = p2Name ? p2Name : players[1].name;
+
+                if(size) {
+                    setGameboardSize(parseInt(size));
+                }
+
+                startNewGame();
+            });
+        } 
 
         const displayGameScreen = () =>  {
             screen.innerHTML = '';
@@ -197,6 +245,7 @@ function GameController(
         }
 
         return {
+            displayMenuScreen,
             displayGameScreen,
             updateCell,
             lockGameBoard,
@@ -393,12 +442,16 @@ function GameController(
 
     const startNewGame = () => {
         isGameInProgress = true;
-        board.generateNewBoard();
         screen.displayGameScreen();
         printNewRound();
     }
 
-    startNewGame();
+    const openMenuScreen = () => {
+        isGameInProgress = false;
+        screen.displayMenuScreen();
+    } 
+
+    openMenuScreen();
 
     return {
         getActivePlayer,
