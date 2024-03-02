@@ -200,7 +200,7 @@ a {
     }
 
     .side-column {
-        flex-flow: row-wrap;
+        flex-flow: row wrap;
         padding: 40px 20px;
         gap: 10px;
         justify-content: center;
